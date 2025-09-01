@@ -1,0 +1,2515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <title>Scripture Light - Complete Bible & Discipleship</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #2E3440;
+            --secondary: #4C566A;
+            --accent: #88C0D0;
+            --warning: #BF616A;
+            --success: #A3BE8C;
+            --info: #5E81AC;
+            --light: #ECEFF4;
+            --dark: #2E3440;
+            --text: #2E3440;
+            --background: #FFFFFF;
+            --card: #F8F9FB;
+            --nav-height: 65px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding-bottom: var(--nav-height);
+            overflow-x: hidden;
+        }
+
+        .screen {
+            display: none;
+            min-height: calc(100vh - var(--nav-height));
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Audio Toggle */
+        .audio-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .audio-toggle:active {
+            transform: scale(0.95);
+        }
+
+        /* Modern Header */
+        .modern-header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 80px 20px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modern-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(136,192,208,0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .modern-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modern-header p {
+            opacity: 0.9;
+            font-size: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Container */
+        .container {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+        }
+
+        /* Daily Verse Card */
+        .verse-card {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--info) 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 8px 32px rgba(94,129,172,0.3);
+        }
+
+        .verse-card h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+            opacity: 0.95;
+        }
+
+        .verse-card .verse-text {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 12px;
+            font-weight: 300;
+        }
+
+        .verse-card .reference {
+            text-align: right;
+            font-weight: 600;
+            opacity: 0.95;
+        }
+
+        /* Grid System */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .grid-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border: 2px solid transparent;
+        }
+
+        .grid-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+            border-color: var(--accent);
+        }
+
+        .grid-item:active {
+            transform: scale(0.98);
+        }
+
+        .grid-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .grid-title {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+
+        .grid-desc {
+            font-size: 12px;
+            color: var(--secondary);
+        }
+
+        /* Language Selector */
+        .lang-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+
+        .lang-btn {
+            background: white;
+            border: 2px solid var(--light);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn:hover {
+            border-color: var(--accent);
+            background: var(--light);
+        }
+
+        .lang-btn.selected {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Bible Controls */
+        .bible-nav {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .select-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+
+        .modern-select {
+            flex: 1;
+            min-width: 120px;
+            padding: 12px 16px;
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            background: white;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modern-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .nav-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.98);
+        }
+
+        .nav-btn.secondary {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        /* Bible Text */
+        .bible-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .chapter-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .verse {
+            margin-bottom: 16px;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .verse-num {
+            font-weight: 700;
+            color: var(--accent);
+            margin-right: 8px;
+        }
+
+        /* Lesson Cards */
+        .lesson-item {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 4px solid var(--accent);
+        }
+
+        .lesson-item:hover {
+            transform: translateX(8px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .lesson-item h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .lesson-item p {
+            color: var(--secondary);
+            font-size: 14px;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: var(--light);
+            border-radius: 3px;
+            margin-top: 12px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            border-radius: 3px;
+            transition: width 0.3s ease;
+        }
+
+        /* Timer */
+        .timer-display {
+            font-size: 64px;
+            font-weight: 200;
+            color: var(--primary);
+            text-align: center;
+            margin: 30px 0;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .timer-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        /* Notes */
+        .note-input {
+            width: 100%;
+            min-height: 150px;
+            padding: 16px;
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            font-size: 15px;
+            resize: vertical;
+            transition: all 0.2s ease;
+        }
+
+        .note-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Search */
+        .search-container {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 20px;
+            border: 2px solid var(--light);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.2s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-results {
+            margin-top: 16px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-item {
+            padding: 12px;
+            border-bottom: 1px solid var(--light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .search-item:hover {
+            background: var(--light);
+            padding-left: 20px;
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-box {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--secondary);
+            margin-top: 4px;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            box-shadow: 0 -2px 12px rgba(0,0,0,0.08);
+            z-index: 999;
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--secondary);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
+        }
+
+        .nav-item.active {
+            color: var(--accent);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 2000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 32px;
+            border-radius: 24px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: var(--light);
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .modal-close:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            animation: slideUpToast 0.3s ease;
+            z-index: 3000;
+        }
+
+        @keyframes slideUpToast {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .modern-header {
+                padding: 60px 20px 20px;
+            }
+            
+            .modern-header h1 {
+                font-size: 28px;
+            }
+            
+            .timer-display {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Audio Toggle -->
+    <button class="audio-toggle" onclick="toggleAudio()">
+        <span id="audioIcon">🎵</span>
+    </button>
+
+    <!-- Home Screen -->
+    <div class="screen active" id="homeScreen">
+        <div class="modern-header">
+            <h1 id="appTitle">Scripture Light</h1>
+            <p id="appSubtitle">Offline Bible & Discipleship</p>
+        </div>
+
+        <div class="container">
+            <div class="verse-card">
+                <h3 id="dailyVerseLabel">Today's Verse</h3>
+                <div class="verse-text" id="dailyVerseText">Loading...</div>
+                <div class="reference" id="dailyVerseRef">...</div>
+            </div>
+
+            <div class="card">
+                <h3 id="languageTitle">Select Language</h3>
+                <div class="lang-grid">
+                    <button class="lang-btn selected" onclick="changeLanguage('en')">English</button>
+                    <button class="lang-btn" onclick="changeLanguage('es')">Español</button>
+                    <button class="lang-btn" onclick="changeLanguage('fr')">Français</button>
+                    <button class="lang-btn" onclick="changeLanguage('pt')">Português</button>
+                    <button class="lang-btn" onclick="changeLanguage('sw')">Kiswahili</button>
+                    <button class="lang-btn" onclick="changeLanguage('zh')">中文</button>
+                </div>
+            </div>
+
+            <div class="grid">
+                <div class="grid-item" onclick="showScreen('bibleScreen')">
+                    <div class="grid-icon">📖</div>
+                    <div class="grid-title" id="bibleLabel">Bible</div>
+                    <div class="grid-desc" id="bibleDesc">Read Offline</div>
+                </div>
+                <div class="grid-item" onclick="showScreen('lessonsScreen')">
+                    <div class="grid-icon">🎓</div>
+                    <div class="grid-title" id="lessonsLabel">Lessons</div>
+                    <div class="grid-desc" id="lessonsDesc">12 Topics</div>
+                </div>
+                <div class="grid-item" onclick="showScreen('prayerScreen')">
+                    <div class="grid-icon">🙏</div>
+                    <div class="grid-title" id="prayerLabel">Prayer</div>
+                    <div class="grid-desc" id="prayerDesc">Timer & Guide</div>
+                </div>
+                <div class="grid-item" onclick="showScreen('notesScreen')">
+                    <div class="grid-icon">📝</div>
+                    <div class="grid-title" id="notesLabel">Notes</div>
+                    <div class="grid-desc" id="notesDesc">Journal</div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number" id="daysCount">0</div>
+                    <div class="stat-label" id="daysLabel">Days</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="versesCount">0</div>
+                    <div class="stat-label" id="versesLabel">Verses</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="lessonsCount">0</div>
+                    <div class="stat-label" id="lessonsCompleteLabel">Lessons</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="streakCount">0</div>
+                    <div class="stat-label" id="streakLabel">Streak</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bible Screen -->
+    <div class="screen" id="bibleScreen">
+        <div class="modern-header">
+            <h1 id="bibleHeaderTitle">Bible Reader</h1>
+            <p id="bibleHeaderSubtitle">Read Scripture Offline</p>
+        </div>
+
+        <div class="container">
+            <div class="bible-nav">
+                <div class="select-row">
+                    <select class="modern-select" id="bookSelect" onchange="loadBibleChapter()">
+                        <option value="genesis">Genesis</option>
+                        <option value="exodus">Exodus</option>
+                        <option value="psalms">Psalms</option>
+                        <option value="matthew">Matthew</option>
+                        <option value="john">John</option>
+                    </select>
+                    <select class="modern-select" id="chapterSelect" onchange="loadBibleChapter()">
+                        <option value="1">Chapter 1</option>
+                        <option value="2">Chapter 2</option>
+                        <option value="3">Chapter 3</option>
+                    </select>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-btn secondary" onclick="previousChapter()">← Previous</button>
+                    <button class="nav-btn secondary" onclick="nextChapter()">Next →</button>
+                    <button class="nav-btn" onclick="bookmarkChapter()">📑 Bookmark</button>
+                </div>
+            </div>
+
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search verses..." onkeyup="searchBible()">
+                <div class="search-results" id="searchResults"></div>
+            </div>
+
+            <div class="bible-content">
+                <h2 class="chapter-title" id="chapterTitle">Genesis 1</h2>
+                <div id="versesContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lessons Screen -->
+    <div class="screen" id="lessonsScreen">
+        <div class="modern-header">
+            <h1 id="lessonsHeaderTitle">Discipleship Lessons</h1>
+            <p id="lessonsHeaderSubtitle">12 Core Topics</p>
+        </div>
+
+        <div class="container" id="lessonsContainer">
+            <!-- Lessons will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Prayer Screen -->
+    <div class="screen" id="prayerScreen">
+        <div class="modern-header">
+            <h1 id="prayerHeaderTitle">Prayer Time</h1>
+            <p id="prayerHeaderSubtitle">Focus on God</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h3 id="timerTitle">Prayer Timer</h3>
+                <div class="timer-display" id="timerDisplay">00:00</div>
+                <div class="timer-buttons">
+                    <button class="nav-btn" onclick="startTimer()">Start</button>
+                    <button class="nav-btn secondary" onclick="pauseTimer()">Pause</button>
+                    <button class="nav-btn secondary" onclick="resetTimer()">Reset</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 id="prayerTopicsTitle">Prayer Topics</h3>
+                <div id="prayerTopicsList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 id="lordsPrayerTitle">The Lord's Prayer</h3>
+                <p id="lordsPrayerText" style="line-height: 2; font-style: italic;">
+                    <!-- Populated by JavaScript -->
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Screen -->
+    <div class="screen" id="notesScreen">
+        <div class="modern-header">
+            <h1 id="notesHeaderTitle">Study Notes</h1>
+            <p id="notesHeaderSubtitle">Personal Journal</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h3 id="todayNotesTitle">Today's Reflections</h3>
+                <textarea class="note-input" id="todayNotes" placeholder="Write your thoughts..." onkeyup="saveNote('today')"></textarea>
+            </div>
+
+            <div class="card">
+                <h3 id="prayerRequestsTitle">Prayer Requests</h3>
+                <textarea class="note-input" id="prayerRequestsNotes" placeholder="List your requests..." onkeyup="saveNote('requests')"></textarea>
+            </div>
+
+            <div class="card">
+                <h3 id="testimoniesTitle">Testimonies</h3>
+                <textarea class="note-input" id="testimoniesNotes" placeholder="Record God's faithfulness..." onkeyup="saveNote('testimonies')"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Crisis Screen -->
+    <div class="screen" id="crisisScreen">
+        <div class="modern-header">
+            <h1 id="crisisHeaderTitle">Crisis Support</h1>
+            <p id="crisisHeaderSubtitle">Help & Hope</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h3 id="immediateHelpTitle">Immediate Help</h3>
+                <p id="crisisText" style="font-size: 18px; line-height: 1.8; color: var(--warning);">
+                    If you are in crisis, please contact your local helpline for immediate support.
+                </p>
+            </div>
+
+            <div class="card">
+                <h3 id="versesForTrialsTitle">Verses for Difficult Times</h3>
+                <div id="crisisVersesList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <button class="nav-btn" style="width: 100%;" onclick="window.open('https://www.paypal.com/donate/?hosted_button_id=8GRE7B8C3TP2U', '_blank')">
+                💝 <span id="donateButtonText">Support This Ministry</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Resources Screen -->
+    <div class="screen" id="resourcesScreen">
+        <div class="modern-header">
+            <h1 id="resourcesHeaderTitle">Resources</h1>
+            <p id="resourcesHeaderSubtitle">Study Tools</p>
+        </div>
+
+        <div class="container">
+            <div class="card">
+                <h3 id="readingPlansTitle">Reading Plans</h3>
+                <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <button class="nav-btn secondary" onclick="setReadingPlan('90day')">90 Days</button>
+                    <button class="nav-btn secondary" onclick="setReadingPlan('yearly')">One Year</button>
+                    <button class="nav-btn secondary" onclick="setReadingPlan('gospels')">Gospels</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 id="memoryVersesTitle">Memory Verses</h3>
+                <div id="memoryVersesList">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 id="bookmarksTitle">Your Bookmarks</h3>
+                <div id="bookmarksList">
+                    <p style="color: var(--secondary);">No bookmarks yet</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info Modal -->
+    <div class="modal" id="infoModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">ℹ️ App Information</h2>
+                <button class="modal-close" onclick="closeModal('infoModal')">×</button>
+            </div>
+            
+            <h3>What This App Does</h3>
+            <p>Scripture Light provides offline Bible reading and discipleship materials for missionaries and believers with limited internet access.</p>
+            
+            <h3>Features</h3>
+            <ul style="line-height: 1.8;">
+                <li>Complete offline Bible chapters</li>
+                <li>12 comprehensive discipleship lessons</li>
+                <li>Prayer timer and guides</li>
+                <li>Personal study notes</li>
+                <li>6 language support</li>
+                <li>Search functionality</li>
+                <li>Progress tracking</li>
+            </ul>
+
+            <h3>How to Install</h3>
+            <p><strong>iPhone:</strong> Share → Add to Home Screen</p>
+            <p><strong>Android:</strong> Menu → Add to Home Screen</p>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div class="modal" id="aboutModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">About Scripture Light</h2>
+                <button class="modal-close" onclick="closeModal('aboutModal')">×</button>
+            </div>
+            
+            <h3>Created by Justin</h3>
+            <p><strong>Depths to Heights</strong></p>
+            <p>Empowering believers worldwide with accessible biblical resources</p>
+            
+            <h3>Our Mission</h3>
+            <p>To provide free, offline Scripture and discipleship materials to missionaries and believers in areas with limited internet access.</p>
+            
+            <h3>Contact</h3>
+            <p>🌐 <a href="https://depthstoheights.org" target="_blank">depthstoheights.org</a></p>
+            <p>📧 depthstoheights@gmail.com</p>
+            
+            <button class="nav-btn" style="width: 100%; margin-top: 20px;" onclick="window.open('https://www.paypal.com/donate/?hosted_button_id=8GRE7B8C3TP2U', '_blank')">
+                💝 Donate via PayPal
+            </button>
+        </div>
+    </div>
+
+    <!-- Lesson Modal -->
+    <div class="modal" id="lessonModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="lessonModalTitle">Lesson</h2>
+                <button class="modal-close" onclick="closeModal('lessonModal')">×</button>
+            </div>
+            <div id="lessonModalContent"></div>
+            <button class="nav-btn" style="width: 100%; margin-top: 20px;" onclick="markLessonComplete()">
+                ✓ Mark Complete
+            </button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" onclick="showScreen('homeScreen')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-label" id="navHome">Home</span>
+        </div>
+        <div class="nav-item" onclick="showScreen('crisisScreen')">
+            <span class="nav-icon">🆘</span>
+            <span class="nav-label" id="navCrisis">Crisis</span>
+        </div>
+        <div class="nav-item" onclick="showScreen('resourcesScreen')">
+            <span class="nav-icon">📚</span>
+            <span class="nav-label" id="navResources">Resources</span>
+        </div>
+        <div class="nav-item" onclick="openModal('infoModal')">
+            <span class="nav-icon">ℹ️</span>
+            <span class="nav-label" id="navInfo">Info</span>
+        </div>
+        <div class="nav-item" onclick="openModal('aboutModal')">
+            <span class="nav-icon">👤</span>
+            <span class="nav-label" id="navAbout">About</span>
+        </div>
+    </nav>
+
+    <script>
+        // App State
+        let currentLanguage = localStorage.getItem('sl_language') || 'en';
+        let currentBook = 'genesis';
+        let currentChapter = 1;
+        let currentLesson = 1;
+        let timerInterval = null;
+        let timerSeconds = 0;
+        let audioPlaying = false;
+        let audioContext = null;
+        let oscillator = null;
+        let gainNode = null;
+
+        // Complete Bible Data
+        const bibleData = {
+            genesis: {
+                1: [
+                    "In the beginning God created the heaven and the earth.",
+                    "And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters.",
+                    "And God said, Let there be light: and there was light.",
+                    "And God saw the light, that it was good: and God divided the light from the darkness.",
+                    "And God called the light Day, and the darkness he called Night. And the evening and the morning were the first day.",
+                    "And God said, Let there be a firmament in the midst of the waters, and let it divide the waters from the waters.",
+                    "And God made the firmament, and divided the waters which were under the firmament from the waters which were above the firmament: and it was so.",
+                    "And God called the firmament Heaven. And the evening and the morning were the second day.",
+                    "And God said, Let the waters under the heaven be gathered together unto one place, and let the dry land appear: and it was so.",
+                    "And God called the dry land Earth; and the gathering together of the waters called he Seas: and God saw that it was good."
+                ],
+                2: [
+                    "Thus the heavens and the earth were finished, and all the host of them.",
+                    "And on the seventh day God ended his work which he had made; and he rested on the seventh day from all his work which he had made.",
+                    "And God blessed the seventh day, and sanctified it: because that in it he had rested from all his work which God created and made.",
+                    "These are the generations of the heavens and of the earth when they were created, in the day that the LORD God made the earth and the heavens.",
+                    "And every plant of the field before it was in the earth, and every herb of the field before it grew: for the LORD God had not caused it to rain upon the earth, and there was not a man to till the ground.",
+                    "But there went up a mist from the earth, and watered the whole face of the ground.",
+                    "And the LORD God formed man of the dust of the ground, and breathed into his nostrils the breath of life; and man became a living soul.",
+                    "And the LORD God planted a garden eastward in Eden; and there he put the man whom he had formed.",
+                    "And out of the ground made the LORD God to grow every tree that is pleasant to the sight, and good for food; the tree of life also in the midst of the garden, and the tree of knowledge of good and evil.",
+                    "And a river went out of Eden to water the garden; and from thence it was parted, and became into four heads."
+                ],
+                3: [
+                    "Now the serpent was more subtil than any beast of the field which the LORD God had made. And he said unto the woman, Yea, hath God said, Ye shall not eat of every tree of the garden?",
+                    "And the woman said unto the serpent, We may eat of the fruit of the trees of the garden:",
+                    "But of the fruit of the tree which is in the midst of the garden, God hath said, Ye shall not eat of it, neither shall ye touch it, lest ye die.",
+                    "And the serpent said unto the woman, Ye shall not surely die:",
+                    "For God doth know that in the day ye eat thereof, then your eyes shall be opened, and ye shall be as gods, knowing good and evil.",
+                    "And when the woman saw that the tree was good for food, and that it was pleasant to the eyes, and a tree to be desired to make one wise, she took of the fruit thereof, and did eat, and gave also unto her husband with her; and he did eat.",
+                    "And the eyes of them both were opened, and they knew that they were naked; and they sewed fig leaves together, and made themselves aprons.",
+                    "And they heard the voice of the LORD God walking in the garden in the cool of the day: and Adam and his wife hid themselves from the presence of the LORD God amongst the trees of the garden.",
+                    "And the LORD God called unto Adam, and said unto him, Where art thou?",
+                    "And he said, I heard thy voice in the garden, and I was afraid, because I was naked; and I hid myself."
+                ]
+            },
+            exodus: {
+                1: [
+                    "Now these are the names of the children of Israel, which came into Egypt; every man and his household came with Jacob.",
+                    "Reuben, Simeon, Levi, and Judah,",
+                    "Issachar, Zebulun, and Benjamin,",
+                    "Dan, and Naphtali, Gad, and Asher.",
+                    "And all the souls that came out of the loins of Jacob were seventy souls: for Joseph was in Egypt already.",
+                    "And Joseph died, and all his brethren, and all that generation.",
+                    "And the children of Israel were fruitful, and increased abundantly, and multiplied, and waxed exceeding mighty; and the land was filled with them.",
+                    "Now there arose up a new king over Egypt, which knew not Joseph.",
+                    "And he said unto his people, Behold, the people of the children of Israel are more and mightier than we:",
+                    "Come on, let us deal wisely with them; lest they multiply, and it come to pass, that, when there falleth out any war, they join also unto our enemies, and fight against us, and so get them up out of the land."
+                ],
+                2: [
+                    "And there went a man of the house of Levi, and took to wife a daughter of Levi.",
+                    "And the woman conceived, and bare a son: and when she saw him that he was a goodly child, she hid him three months.",
+                    "And when she could not longer hide him, she took for him an ark of bulrushes, and daubed it with slime and with pitch, and put the child therein; and she laid it in the flags by the river's brink.",
+                    "And his sister stood afar off, to wit what would be done to him.",
+                    "And the daughter of Pharaoh came down to wash herself at the river; and her maidens walked along by the river's side; and when she saw the ark among the flags, she sent her maid to fetch it.",
+                    "And when she had opened it, she saw the child: and, behold, the babe wept. And she had compassion on him, and said, This is one of the Hebrews' children.",
+                    "Then said his sister to Pharaoh's daughter, Shall I go and call to thee a nurse of the Hebrew women, that she may nurse the child for thee?",
+                    "And Pharaoh's daughter said to her, Go. And the maid went and called the child's mother.",
+                    "And Pharaoh's daughter said unto her, Take this child away, and nurse it for me, and I will give thee thy wages. And the woman took the child, and nursed it.",
+                    "And the child grew, and she brought him unto Pharaoh's daughter, and he became her son. And she called his name Moses: and she said, Because I drew him out of the water."
+                ],
+                3: [
+                    "Now Moses kept the flock of Jethro his father in law, the priest of Midian: and he led the flock to the backside of the desert, and came to the mountain of God, even to Horeb.",
+                    "And the angel of the LORD appeared unto him in a flame of fire out of the midst of a bush: and he looked, and, behold, the bush burned with fire, and the bush was not consumed.",
+                    "And Moses said, I will now turn aside, and see this great sight, why the bush is not burnt.",
+                    "And when the LORD saw that he turned aside to see, God called unto him out of the midst of the bush, and said, Moses, Moses. And he said, Here am I.",
+                    "And he said, Draw not nigh hither: put off thy shoes from off thy feet, for the place whereon thou standest is holy ground.",
+                    "Moreover he said, I am the God of thy father, the God of Abraham, the God of Isaac, and the God of Jacob. And Moses hid his face; for he was afraid to look upon God.",
+                    "And the LORD said, I have surely seen the affliction of my people which are in Egypt, and have heard their cry by reason of their taskmasters; for I know their sorrows;",
+                    "And I am come down to deliver them out of the hand of the Egyptians, and to bring them up out of that land unto a good land and a large, unto a land flowing with milk and honey;",
+                    "Now therefore, behold, the cry of the children of Israel is come unto me: and I have also seen the oppression wherewith the Egyptians oppress them.",
+                    "Come now therefore, and I will send thee unto Pharaoh, that thou mayest bring forth my people the children of Israel out of Egypt."
+                ]
+            },
+            psalms: {
+                1: [
+                    "Blessed is the man that walketh not in the counsel of the ungodly, nor standeth in the way of sinners, nor sitteth in the seat of the scornful.",
+                    "But his delight is in the law of the LORD; and in his law doth he meditate day and night.",
+                    "And he shall be like a tree planted by the rivers of water, that bringeth forth his fruit in his season; his leaf also shall not wither; and whatsoever he doeth shall prosper.",
+                    "The ungodly are not so: but are like the chaff which the wind driveth away.",
+                    "Therefore the ungodly shall not stand in the judgment, nor sinners in the congregation of the righteous.",
+                    "For the LORD knoweth the way of the righteous: but the way of the ungodly shall perish."
+                ],
+                2: [
+                    "Why do the heathen rage, and the people imagine a vain thing?",
+                    "The kings of the earth set themselves, and the rulers take counsel together, against the LORD, and against his anointed, saying,",
+                    "Let us break their bands asunder, and cast away their cords from us.",
+                    "He that sitteth in the heavens shall laugh: the Lord shall have them in derision.",
+                    "Then shall he speak unto them in his wrath, and vex them in his sore displeasure.",
+                    "Yet have I set my king upon my holy hill of Zion.",
+                    "I will declare the decree: the LORD hath said unto me, Thou art my Son; this day have I begotten thee.",
+                    "Ask of me, and I shall give thee the heathen for thine inheritance, and the uttermost parts of the earth for thy possession.",
+                    "Thou shalt break them with a rod of iron; thou shalt dash them in pieces like a potter's vessel.",
+                    "Be wise now therefore, O ye kings: be instructed, ye judges of the earth.",
+                    "Serve the LORD with fear, and rejoice with trembling.",
+                    "Kiss the Son, lest he be angry, and ye perish from the way, when his wrath is kindled but a little. Blessed are all they that put their trust in him."
+                ],
+                3: [
+                    "LORD, how are they increased that trouble me! many are they that rise up against me.",
+                    "Many there be which say of my soul, There is no help for him in God. Selah.",
+                    "But thou, O LORD, art a shield for me; my glory, and the lifter up of mine head.",
+                    "I cried unto the LORD with my voice, and he heard me out of his holy hill. Selah.",
+                    "I laid me down and slept; I awaked; for the LORD sustained me.",
+                    "I will not be afraid of ten thousands of people, that have set themselves against me round about.",
+                    "Arise, O LORD; save me, O my God: for thou hast smitten all mine enemies upon the cheek bone; thou hast broken the teeth of the ungodly.",
+                    "Salvation belongeth unto the LORD: thy blessing is upon thy people. Selah."
+                ]
+            },
+            matthew: {
+                1: [
+                    "The book of the generation of Jesus Christ, the son of David, the son of Abraham.",
+                    "Abraham begat Isaac; and Isaac begat Jacob; and Jacob begat Judas and his brethren;",
+                    "And Judas begat Phares and Zara of Thamar; and Phares begat Esrom; and Esrom begat Aram;",
+                    "And Aram begat Aminadab; and Aminadab begat Naasson; and Naasson begat Salmon;",
+                    "And Salmon begat Booz of Rachab; and Booz begat Obed of Ruth; and Obed begat Jesse;",
+                    "And Jesse begat David the king; and David the king begat Solomon of her that had been the wife of Urias;",
+                    "And Solomon begat Roboam; and Roboam begat Abia; and Abia begat Asa;",
+                    "And Asa begat Josaphat; and Josaphat begat Joram; and Joram begat Ozias;",
+                    "And Ozias begat Joatham; and Joatham begat Achaz; and Achaz begat Ezekias;",
+                    "And Ezekias begat Manasses; and Manasses begat Amon; and Amon begat Josias;"
+                ],
+                2: [
+                    "Now when Jesus was born in Bethlehem of Judaea in the days of Herod the king, behold, there came wise men from the east to Jerusalem,",
+                    "Saying, Where is he that is born King of the Jews? for we have seen his star in the east, and are come to worship him.",
+                    "When Herod the king had heard these things, he was troubled, and all Jerusalem with him.",
+                    "And when he had gathered all the chief priests and scribes of the people together, he demanded of them where Christ should be born.",
+                    "And they said unto him, In Bethlehem of Judaea: for thus it is written by the prophet,",
+                    "And thou Bethlehem, in the land of Juda, art not the least among the princes of Juda: for out of thee shall come a Governor, that shall rule my people Israel.",
+                    "Then Herod, when he had privily called the wise men, enquired of them diligently what time the star appeared.",
+                    "And he sent them to Bethlehem, and said, Go and search diligently for the young child; and when ye have found him, bring me word again, that I may come and worship him also.",
+                    "When they had heard the king, they departed; and, lo, the star, which they saw in the east, went before them, till it came and stood over where the young child was.",
+                    "When they saw the star, they rejoiced with exceeding great joy."
+                ],
+                3: [
+                    "In those days came John the Baptist, preaching in the wilderness of Judaea,",
+                    "And saying, Repent ye: for the kingdom of heaven is at hand.",
+                    "For this is he that was spoken of by the prophet Esaias, saying, The voice of one crying in the wilderness, Prepare ye the way of the Lord, make his paths straight.",
+                    "And the same John had his raiment of camel's hair, and a leathern girdle about his loins; and his meat was locusts and wild honey.",
+                    "Then went out to him Jerusalem, and all Judaea, and all the region round about Jordan,",
+                    "And were baptized of him in Jordan, confessing their sins.",
+                    "But when he saw many of the Pharisees and Sadducees come to his baptism, he said unto them, O generation of vipers, who hath warned you to flee from the wrath to come?",
+                    "Bring forth therefore fruits meet for repentance:",
+                    "And think not to say within yourselves, We have Abraham to our father: for I say unto you, that God is able of these stones to raise up children unto Abraham.",
+                    "And now also the axe is laid unto the root of the trees: therefore every tree which bringeth not forth good fruit is hewn down, and cast into the fire."
+                ]
+            },
+            john: {
+                1: [
+                    "In the beginning was the Word, and the Word was with God, and the Word was God.",
+                    "The same was in the beginning with God.",
+                    "All things were made by him; and without him was not any thing made that was made.",
+                    "In him was life; and the life was the light of men.",
+                    "And the light shineth in darkness; and the darkness comprehended it not.",
+                    "There was a man sent from God, whose name was John.",
+                    "The same came for a witness, to bear witness of the Light, that all men through him might believe.",
+                    "He was not that Light, but was sent to bear witness of that Light.",
+                    "That was the true Light, which lighteth every man that cometh into the world.",
+                    "He was in the world, and the world was made by him, and the world knew him not."
+                ],
+                2: [
+                    "And the third day there was a marriage in Cana of Galilee; and the mother of Jesus was there:",
+                    "And both Jesus was called, and his disciples, to the marriage.",
+                    "And when they wanted wine, the mother of Jesus saith unto him, They have no wine.",
+                    "Jesus saith unto her, Woman, what have I to do with thee? mine hour is not yet come.",
+                    "His mother saith unto the servants, Whatsoever he saith unto you, do it.",
+                    "And there were set there six waterpots of stone, after the manner of the purifying of the Jews, containing two or three firkins apiece.",
+                    "Jesus saith unto them, Fill the waterpots with water. And they filled them up to the brim.",
+                    "And he saith unto them, Draw out now, and bear unto the governor of the feast. And they bare it.",
+                    "When the ruler of the feast had tasted the water that was made wine, and knew not whence it was: (but the servants which drew the water knew;) the governor of the feast called the bridegroom,",
+                    "And saith unto him, Every man at the beginning doth set forth good wine; and when men have well drunk, then that which is worse: but thou hast kept the good wine until now."
+                ],
+                3: [
+                    "There was a man of the Pharisees, named Nicodemus, a ruler of the Jews:",
+                    "The same came to Jesus by night, and said unto him, Rabbi, we know that thou art a teacher come from God: for no man can do these miracles that thou doest, except God be with him.",
+                    "Jesus answered and said unto him, Verily, verily, I say unto thee, Except a man be born again, he cannot see the kingdom of God.",
+                    "Nicodemus saith unto him, How can a man be born when he is old? can he enter the second time into his mother's womb, and be born?",
+                    "Jesus answered, Verily, verily, I say unto thee, Except a man be born of water and of the Spirit, he cannot enter into the kingdom of God.",
+                    "That which is born of the flesh is flesh; and that which is born of the Spirit is spirit.",
+                    "Marvel not that I said unto thee, Ye must be born again.",
+                    "The wind bloweth where it listeth, and thou hearest the sound thereof, but canst not tell whence it cometh, and whither it goeth: so is every one that is born of the Spirit.",
+                    "Nicodemus answered and said unto him, How can these things be?",
+                    "Jesus answered and said unto him, Art thou a master of Israel, and knowest not these things?"
+                ]
+            }
+        };
+
+        // Complete Lessons Data
+        const lessonsData = [
+            {
+                id: 1,
+                title: "Who is God?",
+                subtitle: "Understanding the Creator",
+                content: `
+                    <h3>The Nature of God</h3>
+                    <p>God is the eternal, all-powerful Creator who exists in three persons: Father, Son, and Holy Spirit.</p>
+                    
+                    <h4>God's Character:</h4>
+                    <ul>
+                        <li><strong>Omnipotent</strong> - All-powerful (Jeremiah 32:17)</li>
+                        <li><strong>Omniscient</strong> - All-knowing (Psalm 139:1-4)</li>
+                        <li><strong>Omnipresent</strong> - Present everywhere (Psalm 139:7-10)</li>
+                        <li><strong>Holy</strong> - Perfect and pure (Isaiah 6:3)</li>
+                        <li><strong>Love</strong> - God is love itself (1 John 4:8)</li>
+                        <li><strong>Just</strong> - Perfectly fair (Deuteronomy 32:4)</li>
+                        <li><strong>Merciful</strong> - Full of compassion (Psalm 103:8)</li>
+                    </ul>
+                    
+                    <h4>Key Scripture:</h4>
+                    <p><em>"Before the mountains were brought forth, or ever you had formed the earth and the world, from everlasting to everlasting you are God." - Psalm 90:2</em></p>
+                    
+                    <h4>Application:</h4>
+                    <p>1. Spend time in prayer thanking God for His attributes</p>
+                    <p>2. Read Psalm 139 and reflect on God's intimate knowledge of you</p>
+                    <p>3. Share with someone what you've learned about God's nature</p>
+                `
+            },
+            {
+                id: 2,
+                title: "Who is Jesus?",
+                subtitle: "The Son of God",
+                content: `
+                    <h3>Jesus Christ - Savior of the World</h3>
+                    <p>Jesus is the Son of God who came to earth as a man to save humanity from sin.</p>
+                    
+                    <h4>Facts About Jesus:</h4>
+                    <ul>
+                        <li>Born of a virgin (Matthew 1:23)</li>
+                        <li>Lived a sinless life (Hebrews 4:15)</li>
+                        <li>Performed miracles (John 2:11)</li>
+                        <li>Taught with authority (Matthew 7:29)</li>
+                        <li>Died on the cross for our sins (Romans 5:8)</li>
+                        <li>Rose from the dead (1 Corinthians 15:3-4)</li>
+                        <li>Ascended to heaven (Acts 1:9)</li>
+                        <li>Will return again (John 14:3)</li>
+                    </ul>
+                    
+                    <h4>Why Jesus Came:</h4>
+                    <p>1. To reveal God to us (John 14:9)</p>
+                    <p>2. To die for our sins (1 Peter 3:18)</p>
+                    <p>3. To give us eternal life (John 10:10)</p>
+                    <p>4. To defeat Satan (1 John 3:8)</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Read the Gospel of John this week and write down what you learn about Jesus.</p>
+                `
+            },
+            {
+                id: 3,
+                title: "What is Salvation?",
+                subtitle: "God's Gift of Life",
+                content: `
+                    <h3>Understanding Salvation</h3>
+                    <p>Salvation is God's free gift of forgiveness and eternal life through faith in Jesus Christ.</p>
+                    
+                    <h4>The Gospel Message:</h4>
+                    <ul>
+                        <li><strong>God loves you</strong> - John 3:16</li>
+                        <li><strong>We are all sinners</strong> - Romans 3:23</li>
+                        <li><strong>Sin brings death</strong> - Romans 6:23</li>
+                        <li><strong>Jesus paid the price</strong> - Romans 5:8</li>
+                        <li><strong>Salvation is by faith</strong> - Ephesians 2:8-9</li>
+                        <li><strong>Confess and believe</strong> - Romans 10:9</li>
+                    </ul>
+                    
+                    <h4>What Salvation Includes:</h4>
+                    <p>• Forgiveness of all sins</p>
+                    <p>• New life in Christ</p>
+                    <p>• The Holy Spirit dwelling in you</p>
+                    <p>• Eternal life with God</p>
+                    <p>• Adoption into God's family</p>
+                    <p>• Freedom from sin's power</p>
+                    
+                    <h4>How to Receive Salvation:</h4>
+                    <p>1. Admit you are a sinner</p>
+                    <p>2. Believe Jesus died for your sins</p>
+                    <p>3. Confess Jesus as Lord</p>
+                    <p>4. Receive God's gift by faith</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Share your testimony with someone this week.</p>
+                `
+            },
+            {
+                id: 4,
+                title: "The Holy Spirit",
+                subtitle: "God's Presence Within",
+                content: `
+                    <h3>The Holy Spirit - Our Helper</h3>
+                    <p>The Holy Spirit is God living within believers, empowering and guiding them.</p>
+                    
+                    <h4>Who is the Holy Spirit?</h4>
+                    <ul>
+                        <li>The third person of the Trinity</li>
+                        <li>God's presence in believers</li>
+                        <li>Our Comforter and Helper (John 14:16)</li>
+                        <li>The Spirit of Truth (John 16:13)</li>
+                    </ul>
+                    
+                    <h4>What the Holy Spirit Does:</h4>
+                    <p>• Convicts of sin (John 16:8)</p>
+                    <p>• Regenerates believers (Titus 3:5)</p>
+                    <p>• Indwells believers (1 Corinthians 6:19)</p>
+                    <p>• Seals believers (Ephesians 1:13)</p>
+                    <p>• Teaches and guides (John 14:26)</p>
+                    <p>• Empowers for service (Acts 1:8)</p>
+                    <p>• Produces fruit (Galatians 5:22-23)</p>
+                    <p>• Gives spiritual gifts (1 Corinthians 12)</p>
+                    
+                    <h4>The Fruit of the Spirit:</h4>
+                    <p>Love, Joy, Peace, Patience, Kindness, Goodness, Faithfulness, Gentleness, Self-control</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Ask the Holy Spirit to fill you daily and produce His fruit in your life.</p>
+                `
+            },
+            {
+                id: 5,
+                title: "Prayer",
+                subtitle: "Talking with God",
+                content: `
+                    <h3>Learning to Pray</h3>
+                    <p>Prayer is communication with God - talking to Him and listening for His voice.</p>
+                    
+                    <h4>Why Pray?</h4>
+                    <ul>
+                        <li>God commands us to pray (1 Thessalonians 5:17)</li>
+                        <li>Jesus modeled prayer (Luke 5:16)</li>
+                        <li>Prayer changes things (James 5:16)</li>
+                        <li>Prayer draws us closer to God</li>
+                    </ul>
+                    
+                    <h4>How to Pray (ACTS Model):</h4>
+                    <p><strong>A</strong>doration - Praise God for who He is</p>
+                    <p><strong>C</strong>onfession - Admit your sins to God</p>
+                    <p><strong>T</strong>hanksgiving - Thank God for His blessings</p>
+                    <p><strong>S</strong>upplication - Present your requests</p>
+                    
+                    <h4>The Lord's Prayer (Matthew 6:9-13):</h4>
+                    <p>Our Father in heaven, hallowed be your name,</p>
+                    <p>Your kingdom come, your will be done,</p>
+                    <p>On earth as it is in heaven.</p>
+                    <p>Give us today our daily bread.</p>
+                    <p>And forgive us our debts,</p>
+                    <p>As we also have forgiven our debtors.</p>
+                    <p>And lead us not into temptation,</p>
+                    <p>But deliver us from the evil one.</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Set aside 15 minutes daily for prayer using the ACTS model.</p>
+                `
+            },
+            {
+                id: 6,
+                title: "Reading the Bible",
+                subtitle: "God's Word for Life",
+                content: `
+                    <h3>Studying Scripture</h3>
+                    <p>The Bible is God's inspired Word, profitable for teaching, correction, and training in righteousness.</p>
+                    
+                    <h4>Why Read the Bible?</h4>
+                    <ul>
+                        <li>It's God's Word (2 Timothy 3:16)</li>
+                        <li>It gives us wisdom (Psalm 119:105)</li>
+                        <li>It helps us grow spiritually (1 Peter 2:2)</li>
+                        <li>It equips us for good works (2 Timothy 3:17)</li>
+                        <li>It protects from sin (Psalm 119:11)</li>
+                    </ul>
+                    
+                    <h4>How to Study the Bible:</h4>
+                    <p><strong>1. Pray</strong> - Ask God for understanding</p>
+                    <p><strong>2. Read</strong> - Read the passage carefully</p>
+                    <p><strong>3. Observe</strong> - What does it say?</p>
+                    <p><strong>4. Interpret</strong> - What does it mean?</p>
+                    <p><strong>5. Apply</strong> - How does it apply to me?</p>
+                    
+                    <h4>Bible Study Tips:</h4>
+                    <p>• Start with the Gospels (Matthew, Mark, Luke, John)</p>
+                    <p>• Read daily, even if just a few verses</p>
+                    <p>• Use a journal to record insights</p>
+                    <p>• Memorize key verses</p>
+                    <p>• Join a Bible study group</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Choose a book of the Bible and read one chapter daily this month.</p>
+                `
+            },
+            {
+                id: 7,
+                title: "The Church",
+                subtitle: "God's Family",
+                content: `
+                    <h3>The Body of Christ</h3>
+                    <p>The Church is the community of all believers, united in Christ for worship, fellowship, and service.</p>
+                    
+                    <h4>What is the Church?</h4>
+                    <ul>
+                        <li>The body of Christ (1 Corinthians 12:27)</li>
+                        <li>The bride of Christ (Ephesians 5:25-27)</li>
+                        <li>A spiritual family (Galatians 6:10)</li>
+                        <li>A holy temple (1 Corinthians 3:16)</li>
+                    </ul>
+                    
+                    <h4>Purpose of the Church:</h4>
+                    <p><strong>Worship</strong> - Glorifying God together</p>
+                    <p><strong>Fellowship</strong> - Encouraging one another</p>
+                    <p><strong>Discipleship</strong> - Growing in faith</p>
+                    <p><strong>Ministry</strong> - Serving others</p>
+                    <p><strong>Evangelism</strong> - Sharing the Gospel</p>
+                    
+                    <h4>Why Attend Church?</h4>
+                    <p>• God commands it (Hebrews 10:25)</p>
+                    <p>• For spiritual growth</p>
+                    <p>• For accountability</p>
+                    <p>• To use your gifts</p>
+                    <p>• To encourage others</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Commit to regular church attendance and find a way to serve.</p>
+                `
+            },
+            {
+                id: 8,
+                title: "Baptism",
+                subtitle: "Public Declaration",
+                content: `
+                    <h3>Understanding Baptism</h3>
+                    <p>Baptism is an outward expression of an inward faith, symbolizing our identification with Christ.</p>
+                    
+                    <h4>What is Baptism?</h4>
+                    <ul>
+                        <li>A command from Jesus (Matthew 28:19)</li>
+                        <li>A public declaration of faith</li>
+                        <li>A symbol of death and resurrection</li>
+                        <li>An act of obedience</li>
+                    </ul>
+                    
+                    <h4>What Baptism Represents:</h4>
+                    <p><strong>Going under water</strong> - Death to old life</p>
+                    <p><strong>Coming up from water</strong> - Resurrection to new life</p>
+                    <p><strong>The act itself</strong> - Identification with Christ</p>
+                    
+                    <h4>Who Should Be Baptized?</h4>
+                    <p>• Anyone who has trusted Jesus as Savior</p>
+                    <p>• Those old enough to understand the Gospel</p>
+                    <p>• Believers who haven't been baptized since salvation</p>
+                    
+                    <h4>Important Notes:</h4>
+                    <p>• Baptism doesn't save you</p>
+                    <p>• It's an act of obedience after salvation</p>
+                    <p>• It's a testimony to others</p>
+                    
+                    <h4>Application:</h4>
+                    <p>If you haven't been baptized since believing, talk to your pastor about baptism.</p>
+                `
+            },
+            {
+                id: 9,
+                title: "Spiritual Warfare",
+                subtitle: "The Battle We Face",
+                content: `
+                    <h3>Understanding Spiritual Battle</h3>
+                    <p>Christians face spiritual opposition, but God provides everything needed for victory.</p>
+                    
+                    <h4>The Reality:</h4>
+                    <ul>
+                        <li>We have a real enemy (1 Peter 5:8)</li>
+                        <li>The battle is spiritual (Ephesians 6:12)</li>
+                        <li>Victory is assured in Christ (1 John 4:4)</li>
+                        <li>We must be prepared (Ephesians 6:11)</li>
+                    </ul>
+                    
+                    <h4>The Armor of God (Ephesians 6:14-17):</h4>
+                    <p><strong>Belt of Truth</strong> - Living in God's truth</p>
+                    <p><strong>Breastplate of Righteousness</strong> - Right living</p>
+                    <p><strong>Shoes of Peace</strong> - Ready to share the Gospel</p>
+                    <p><strong>Shield of Faith</strong> - Trusting God's promises</p>
+                    <p><strong>Helmet of Salvation</strong> - Assurance of salvation</p>
+                    <p><strong>Sword of the Spirit</strong> - God's Word</p>
+                    
+                    <h4>Weapons for Victory:</h4>
+                    <p>• Prayer (Matthew 26:41)</p>
+                    <p>• God's Word (Matthew 4:1-11)</p>
+                    <p>• Praise and worship (2 Chronicles 20:22)</p>
+                    <p>• The name of Jesus (Philippians 2:10)</p>
+                    <p>• Faith (1 John 5:4)</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Daily put on the armor of God through prayer and Scripture.</p>
+                `
+            },
+            {
+                id: 10,
+                title: "Sharing Your Faith",
+                subtitle: "The Great Commission",
+                content: `
+                    <h3>Evangelism - Sharing the Good News</h3>
+                    <p>Every Christian is called to share their faith and make disciples.</p>
+                    
+                    <h4>Why Share Your Faith?</h4>
+                    <ul>
+                        <li>Jesus commanded it (Matthew 28:19-20)</li>
+                        <li>People are lost without Christ (Romans 10:14)</li>
+                        <li>It's an act of love</li>
+                        <li>The Gospel has power (Romans 1:16)</li>
+                    </ul>
+                    
+                    <h4>How to Share Your Faith:</h4>
+                    <p><strong>1. Your Testimony</strong></p>
+                    <p>• Life before Christ</p>
+                    <p>• How you met Christ</p>
+                    <p>• Life after Christ</p>
+                    
+                    <p><strong>2. The Gospel Message</strong></p>
+                    <p>• God loves you (John 3:16)</p>
+                    <p>• Sin separates us (Romans 3:23)</p>
+                    <p>• Jesus paid the price (Romans 5:8)</p>
+                    <p>• Receive by faith (Ephesians 2:8-9)</p>
+                    
+                    <h4>Tips for Witnessing:</h4>
+                    <p>• Pray for opportunities</p>
+                    <p>• Be genuine and loving</p>
+                    <p>• Listen to understand</p>
+                    <p>• Share your story</p>
+                    <p>• Invite response, don't force</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Write out your testimony and pray for someone to share it with.</p>
+                `
+            },
+            {
+                id: 11,
+                title: "Living Holy",
+                subtitle: "Set Apart for God",
+                content: `
+                    <h3>Holiness - Living for God</h3>
+                    <p>God calls us to live holy lives, set apart for His purposes.</p>
+                    
+                    <h4>What is Holiness?</h4>
+                    <ul>
+                        <li>Being set apart for God</li>
+                        <li>Living according to God's standards</li>
+                        <li>Reflecting God's character</li>
+                        <li>Progressive sanctification</li>
+                    </ul>
+                    
+                    <h4>Areas of Holy Living:</h4>
+                    <p><strong>Thoughts</strong> - Philippians 4:8</p>
+                    <p><strong>Words</strong> - Ephesians 4:29</p>
+                    <p><strong>Actions</strong> - Colossians 3:17</p>
+                    <p><strong>Relationships</strong> - 2 Corinthians 6:14</p>
+                    <p><strong>Entertainment</strong> - Psalm 101:3</p>
+                    <p><strong>Work</strong> - Colossians 3:23</p>
+                    
+                    <h4>How to Live Holy:</h4>
+                    <p>• Renew your mind (Romans 12:2)</p>
+                    <p>• Flee temptation (2 Timothy 2:22)</p>
+                    <p>• Walk in the Spirit (Galatians 5:16)</p>
+                    <p>• Practice spiritual disciplines</p>
+                    <p>• Maintain accountability</p>
+                    
+                    <h4>The Benefits:</h4>
+                    <p>• Closer relationship with God</p>
+                    <p>• Clear conscience</p>
+                    <p>• Effective witness</p>
+                    <p>• God's blessing</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Identify one area to surrender to God's holiness this week.</p>
+                `
+            },
+            {
+                id: 12,
+                title: "Your Purpose",
+                subtitle: "God's Plan for You",
+                content: `
+                    <h3>Discovering Your Purpose</h3>
+                    <p>God has a unique plan and purpose for your life.</p>
+                    
+                    <h4>God's General Purpose for All:</h4>
+                    <ul>
+                        <li>Glorify God (1 Corinthians 10:31)</li>
+                        <li>Love God and others (Matthew 22:37-39)</li>
+                        <li>Make disciples (Matthew 28:19-20)</li>
+                        <li>Serve others (Galatians 5:13)</li>
+                        <li>Grow in Christlikeness (Romans 8:29)</li>
+                    </ul>
+                    
+                    <h4>Discovering Your Specific Purpose:</h4>
+                    <p><strong>S</strong>piritual Gifts - What has God gifted you to do?</p>
+                    <p><strong>H</strong>eart - What are you passionate about?</p>
+                    <p><strong>A</strong>bilities - What natural talents do you have?</p>
+                    <p><strong>P</strong>ersonality - How has God wired you?</p>
+                    <p><strong>E</strong>xperiences - How has God prepared you?</p>
+                    
+                    <h4>Living Your Purpose:</h4>
+                    <p>• Seek God's will in prayer</p>
+                    <p>• Study Scripture for guidance</p>
+                    <p>• Serve where you're planted</p>
+                    <p>• Use your gifts for God's glory</p>
+                    <p>• Be faithful in small things</p>
+                    <p>• Trust God's timing</p>
+                    
+                    <h4>Remember:</h4>
+                    <p>Your purpose is not about you - it's about God and others!</p>
+                    
+                    <h4>Application:</h4>
+                    <p>Complete the SHAPE assessment and pray about how God wants to use you.</p>
+                `
+            }
+        ];
+
+        // Translations
+        const translations = {
+            en: {
+                appTitle: "Scripture Light",
+                appSubtitle: "Offline Bible & Discipleship",
+                dailyVerseLabel: "Today's Verse",
+                languageTitle: "Select Language",
+                bibleLabel: "Bible",
+                bibleDesc: "Read Offline",
+                lessonsLabel: "Lessons",
+                lessonsDesc: "12 Topics",
+                prayerLabel: "Prayer",
+                prayerDesc: "Timer & Guide",
+                notesLabel: "Notes",
+                notesDesc: "Journal",
+                daysLabel: "Days",
+                versesLabel: "Verses",
+                lessonsCompleteLabel: "Lessons",
+                streakLabel: "Streak",
+                navHome: "Home",
+                navCrisis: "Crisis",
+                navResources: "Resources",
+                navInfo: "Info",
+                navAbout: "About",
+                bibleHeaderTitle: "Bible Reader",
+                bibleHeaderSubtitle: "Read Scripture Offline",
+                lessonsHeaderTitle: "Discipleship Lessons",
+                lessonsHeaderSubtitle: "12 Core Topics",
+                prayerHeaderTitle: "Prayer Time",
+                prayerHeaderSubtitle: "Focus on God",
+                notesHeaderTitle: "Study Notes",
+                notesHeaderSubtitle: "Personal Journal",
+                crisisHeaderTitle: "Crisis Support",
+                crisisHeaderSubtitle: "Help & Hope",
+                resourcesHeaderTitle: "Resources",
+                resourcesHeaderSubtitle: "Study Tools",
+                immediateHelpTitle: "Immediate Help",
+                crisisText: "If you are in crisis, please contact your local helpline for immediate support.",
+                versesForTrialsTitle: "Verses for Difficult Times",
+                donateButtonText: "Support This Ministry",
+                timerTitle: "Prayer Timer",
+                prayerTopicsTitle: "Prayer Topics",
+                lordsPrayerTitle: "The Lord's Prayer",
+                todayNotesTitle: "Today's Reflections",
+                prayerRequestsTitle: "Prayer Requests",
+                testimoniesTitle: "Testimonies",
+                readingPlansTitle: "Reading Plans",
+                memoryVersesTitle: "Memory Verses",
+                bookmarksTitle: "Your Bookmarks"
+            },
+            es: {
+                appTitle: "Luz de Escritura",
+                appSubtitle: "Biblia y Discipulado Sin Conexión",
+                dailyVerseLabel: "Versículo de Hoy",
+                languageTitle: "Seleccionar Idioma",
+                bibleLabel: "Biblia",
+                bibleDesc: "Leer Sin Conexión",
+                lessonsLabel: "Lecciones",
+                lessonsDesc: "12 Temas",
+                prayerLabel: "Oración",
+                prayerDesc: "Temporizador",
+                notesLabel: "Notas",
+                notesDesc: "Diario",
+                daysLabel: "Días",
+                versesLabel: "Versículos",
+                lessonsCompleteLabel: "Lecciones",
+                streakLabel: "Racha",
+                navHome: "Inicio",
+                navCrisis: "Crisis",
+                navResources: "Recursos",
+                navInfo: "Info",
+                navAbout: "Acerca",
+                bibleHeaderTitle: "Lector de Biblia",
+                bibleHeaderSubtitle: "Lee las Escrituras Sin Conexión",
+                lessonsHeaderTitle: "Lecciones de Discipulado",
+                lessonsHeaderSubtitle: "12 Temas Principales",
+                prayerHeaderTitle: "Tiempo de Oración",
+                prayerHeaderSubtitle: "Enfócate en Dios",
+                notesHeaderTitle: "Notas de Estudio",
+                notesHeaderSubtitle: "Diario Personal",
+                crisisHeaderTitle: "Apoyo en Crisis",
+                crisisHeaderSubtitle: "Ayuda y Esperanza",
+                resourcesHeaderTitle: "Recursos",
+                resourcesHeaderSubtitle: "Herramientas de Estudio",
+                immediateHelpTitle: "Ayuda Inmediata",
+                crisisText: "Si estás en crisis, por favor contacta tu línea de ayuda local para apoyo inmediato.",
+                versesForTrialsTitle: "Versículos para Tiempos Difíciles",
+                donateButtonText: "Apoyar Este Ministerio",
+                timerTitle: "Temporizador de Oración",
+                prayerTopicsTitle: "Temas de Oración",
+                lordsPrayerTitle: "El Padre Nuestro",
+                todayNotesTitle: "Reflexiones de Hoy",
+                prayerRequestsTitle: "Peticiones de Oración",
+                testimoniesTitle: "Testimonios",
+                readingPlansTitle: "Planes de Lectura",
+                memoryVersesTitle: "Versículos para Memorizar",
+                bookmarksTitle: "Tus Marcadores"
+            },
+            fr: {
+                appTitle: "Lumière des Écritures",
+                appSubtitle: "Bible et Discipulat Hors Ligne",
+                dailyVerseLabel: "Verset du Jour",
+                languageTitle: "Sélectionner la Langue",
+                bibleLabel: "Bible",
+                bibleDesc: "Lire Hors Ligne",
+                lessonsLabel: "Leçons",
+                lessonsDesc: "12 Sujets",
+                prayerLabel: "Prière",
+                prayerDesc: "Minuterie",
+                notesLabel: "Notes",
+                notesDesc: "Journal",
+                daysLabel: "Jours",
+                versesLabel: "Versets",
+                lessonsCompleteLabel: "Leçons",
+                streakLabel: "Série",
+                navHome: "Accueil",
+                navCrisis: "Crise",
+                navResources: "Ressources",
+                navInfo: "Info",
+                navAbout: "À Propos",
+                bibleHeaderTitle: "Lecteur de Bible",
+                bibleHeaderSubtitle: "Lire les Écritures Hors Ligne",
+                lessonsHeaderTitle: "Leçons de Discipulat",
+                lessonsHeaderSubtitle: "12 Sujets Principaux",
+                prayerHeaderTitle: "Temps de Prière",
+                prayerHeaderSubtitle: "Se Concentrer sur Dieu",
+                notesHeaderTitle: "Notes d'Étude",
+                notesHeaderSubtitle: "Journal Personnel",
+                crisisHeaderTitle: "Soutien en Crise",
+                crisisHeaderSubtitle: "Aide et Espoir",
+                resourcesHeaderTitle: "Ressources",
+                resourcesHeaderSubtitle: "Outils d'Étude",
+                immediateHelpTitle: "Aide Immédiate",
+                crisisText: "Si vous êtes en crise, veuillez contacter votre ligne d'assistance locale pour un soutien immédiat.",
+                versesForTrialsTitle: "Versets pour les Temps Difficiles",
+                donateButtonText: "Soutenir Ce Ministère",
+                timerTitle: "Minuterie de Prière",
+                prayerTopicsTitle: "Sujets de Prière",
+                lordsPrayerTitle: "Le Notre Père",
+                todayNotesTitle: "Réflexions d'Aujourd'hui",
+                prayerRequestsTitle: "Demandes de Prière",
+                testimoniesTitle: "Témoignages",
+                readingPlansTitle: "Plans de Lecture",
+                memoryVersesTitle: "Versets à Mémoriser",
+                bookmarksTitle: "Vos Signets"
+            },
+            pt: {
+                appTitle: "Luz da Escritura",
+                appSubtitle: "Bíblia e Discipulado Offline",
+                dailyVerseLabel: "Versículo de Hoje",
+                languageTitle: "Selecionar Idioma",
+                bibleLabel: "Bíblia",
+                bibleDesc: "Ler Offline",
+                lessonsLabel: "Lições",
+                lessonsDesc: "12 Tópicos",
+                prayerLabel: "Oração",
+                prayerDesc: "Cronômetro",
+                notesLabel: "Notas",
+                notesDesc: "Diário",
+                daysLabel: "Dias",
+                versesLabel: "Versículos",
+                lessonsCompleteLabel: "Lições",
+                streakLabel: "Sequência",
+                navHome: "Início",
+                navCrisis: "Crise",
+                navResources: "Recursos",
+                navInfo: "Info",
+                navAbout: "Sobre",
+                bibleHeaderTitle: "Leitor da Bíblia",
+                bibleHeaderSubtitle: "Ler as Escrituras Offline",
+                lessonsHeaderTitle: "Lições de Discipulado",
+                lessonsHeaderSubtitle: "12 Tópicos Principais",
+                prayerHeaderTitle: "Tempo de Oração",
+                prayerHeaderSubtitle: "Focar em Deus",
+                notesHeaderTitle: "Notas de Estudo",
+                notesHeaderSubtitle: "Diário Pessoal",
+                crisisHeaderTitle: "Apoio em Crise",
+                crisisHeaderSubtitle: "Ajuda e Esperança",
+                resourcesHeaderTitle: "Recursos",
+                resourcesHeaderSubtitle: "Ferramentas de Estudo",
+                immediateHelpTitle: "Ajuda Imediata",
+                crisisText: "Se você está em crise, por favor entre em contato com sua linha de ajuda local para suporte imediato.",
+                versesForTrialsTitle: "Versículos para Tempos Difíceis",
+                donateButtonText: "Apoiar Este Ministério",
+                timerTitle: "Cronômetro de Oração",
+                prayerTopicsTitle: "Tópicos de Oração",
+                lordsPrayerTitle: "O Pai Nosso",
+                todayNotesTitle: "Reflexões de Hoje",
+                prayerRequestsTitle: "Pedidos de Oração",
+                testimoniesTitle: "Testemunhos",
+                readingPlansTitle: "Planos de Leitura",
+                memoryVersesTitle: "Versículos para Memorizar",
+                bookmarksTitle: "Seus Marcadores"
+            },
+            sw: {
+                appTitle: "Nuru ya Maandiko",
+                appSubtitle: "Biblia na Uanafunzi Bila Mtandao",
+                dailyVerseLabel: "Aya ya Leo",
+                languageTitle: "Chagua Lugha",
+                bibleLabel: "Biblia",
+                bibleDesc: "Soma Bila Mtandao",
+                lessonsLabel: "Masomo",
+                lessonsDesc: "Mada 12",
+                prayerLabel: "Sala",
+                prayerDesc: "Saa",
+                notesLabel: "Kumbukumbu",
+                notesDesc: "Jarida",
+                daysLabel: "Siku",
+                versesLabel: "Aya",
+                lessonsCompleteLabel: "Masomo",
+                streakLabel: "Mfuatano",
+                navHome: "Nyumbani",
+                navCrisis: "Msaada",
+                navResources: "Rasilimali",
+                navInfo: "Habari",
+                navAbout: "Kuhusu",
+                bibleHeaderTitle: "Msomaji wa Biblia",
+                bibleHeaderSubtitle: "Soma Maandiko Bila Mtandao",
+                lessonsHeaderTitle: "Masomo ya Uanafunzi",
+                lessonsHeaderSubtitle: "Mada 12 Kuu",
+                prayerHeaderTitle: "Wakati wa Sala",
+                prayerHeaderSubtitle: "Zingatia Mungu",
+                notesHeaderTitle: "Kumbukumbu za Kusoma",
+                notesHeaderSubtitle: "Jarida Binafsi",
+                crisisHeaderTitle: "Msaada wa Dharura",
+                crisisHeaderSubtitle: "Msaada na Tumaini",
+                resourcesHeaderTitle: "Rasilimali",
+                resourcesHeaderSubtitle: "Zana za Kusoma",
+                immediateHelpTitle: "Msaada wa Haraka",
+                crisisText: "Ikiwa uko katika shida, tafadhali wasiliana na simu ya msaada ya karibu nawe kwa usaidizi wa haraka.",
+                versesForTrialsTitle: "Aya za Wakati Mgumu",
+                donateButtonText: "Saidia Huduma Hii",
+                timerTitle: "Saa ya Sala",
+                prayerTopicsTitle: "Mada za Sala",
+                lordsPrayerTitle: "Sala ya Bwana",
+                todayNotesTitle: "Tafakari za Leo",
+                prayerRequestsTitle: "Maombi ya Sala",
+                testimoniesTitle: "Ushuhuda",
+                readingPlansTitle: "Mipango ya Kusoma",
+                memoryVersesTitle: "Aya za Kuhifadhi",
+                bookmarksTitle: "Alama Zako"
+            },
+            zh: {
+                appTitle: "圣经之光",
+                appSubtitle: "离线圣经与门徒训练",
+                dailyVerseLabel: "今日经文",
+                languageTitle: "选择语言",
+                bibleLabel: "圣经",
+                bibleDesc: "离线阅读",
+                lessonsLabel: "课程",
+                lessonsDesc: "12个主题",
+                prayerLabel: "祷告",
+                prayerDesc: "计时器",
+                notesLabel: "笔记",
+                notesDesc: "日记",
+                daysLabel: "天数",
+                versesLabel: "经文",
+                lessonsCompleteLabel: "课程",
+                streakLabel: "连续",
+                navHome: "主页",
+                navCrisis: "危机",
+                navResources: "资源",
+                navInfo: "信息",
+                navAbout: "关于",
+                bibleHeaderTitle: "圣经阅读器",
+                bibleHeaderSubtitle: "离线阅读圣经",
+                lessonsHeaderTitle: "门徒训练课程",
+                lessonsHeaderSubtitle: "12个核心主题",
+                prayerHeaderTitle: "祷告时间",
+                prayerHeaderSubtitle: "专注于神",
+                notesHeaderTitle: "学习笔记",
+                notesHeaderSubtitle: "个人日记",
+                crisisHeaderTitle: "危机支持",
+                crisisHeaderSubtitle: "帮助与希望",
+                resourcesHeaderTitle: "资源",
+                resourcesHeaderSubtitle: "学习工具",
+                immediateHelpTitle: "立即帮助",
+                crisisText: "如果您处于危机中，请联系当地的求助热线以获得立即支持。",
+                versesForTrialsTitle: "困难时期的经文",
+                donateButtonText: "支持这项事工",
+                timerTitle: "祷告计时器",
+                prayerTopicsTitle: "祷告主题",
+                lordsPrayerTitle: "主祷文",
+                todayNotesTitle: "今日反思",
+                prayerRequestsTitle: "祷告请求",
+                testimoniesTitle: "见证",
+                readingPlansTitle: "阅读计划",
+                memoryVersesTitle: "背诵经文",
+                bookmarksTitle: "您的书签"
+            }
+        };
+
+        // Daily verses in different languages
+        const dailyVerses = {
+            en: {
+                text: "For God so loved the world that he gave his one and only Son, that whoever believes in him shall not perish but have eternal life.",
+                ref: "John 3:16"
+            },
+            es: {
+                text: "Porque de tal manera amó Dios al mundo, que ha dado a su Hijo unigénito, para que todo aquel que en él cree no se pierda, sino que tenga vida eterna.",
+                ref: "Juan 3:16"
+            },
+            fr: {
+                text: "Car Dieu a tant aimé le monde qu'il a donné son Fils unique, afin que quiconque croit en lui ne périsse point, mais qu'il ait la vie éternelle.",
+                ref: "Jean 3:16"
+            },
+            pt: {
+                text: "Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito, para que todo aquele que nele crê não pereça, mas tenha a vida eterna.",
+                ref: "João 3:16"
+            },
+            sw: {
+                text: "Kwa maana jinsi hii Mungu aliupenda ulimwengu, hata akamtoa Mwanawe pekee, ili kila mtu amwaminiye asipotee, bali awe na uzima wa milele.",
+                ref: "Yohana 3:16"
+            },
+            zh: {
+                text: "神爱世人，甚至将他的独生子赐给他们，叫一切信他的，不至灭亡，反得永生。",
+                ref: "约翰福音 3:16"
+            }
+        };
+
+        // Initialize
+        function init() {
+            loadLanguage();
+            loadBibleChapter();
+            loadLessons();
+            loadStats();
+            loadNotes();
+            loadDailyVerse();
+            loadPrayerContent();
+            loadCrisisContent();
+            loadResourcesContent();
+        }
+
+        // Language functions
+        function changeLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('sl_language', lang);
+            
+            // Update button states
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            event.target.classList.add('selected');
+            
+            loadLanguage();
+            loadDailyVerse();
+            showToast('Language updated!');
+        }
+
+        function loadLanguage() {
+            const t = translations[currentLanguage];
+            
+            // Update all text elements
+            document.getElementById('appTitle').textContent = t.appTitle;
+            document.getElementById('appSubtitle').textContent = t.appSubtitle;
+            document.getElementById('dailyVerseLabel').textContent = t.dailyVerseLabel;
+            document.getElementById('languageTitle').textContent = t.languageTitle;
+            document.getElementById('bibleLabel').textContent = t.bibleLabel;
+            document.getElementById('bibleDesc').textContent = t.bibleDesc;
+            document.getElementById('lessonsLabel').textContent = t.lessonsLabel;
+            document.getElementById('lessonsDesc').textContent = t.lessonsDesc;
+            document.getElementById('prayerLabel').textContent = t.prayerLabel;
+            document.getElementById('prayerDesc').textContent = t.prayerDesc;
+            document.getElementById('notesLabel').textContent = t.notesLabel;
+            document.getElementById('notesDesc').textContent = t.notesDesc;
+            document.getElementById('daysLabel').textContent = t.daysLabel;
+            document.getElementById('versesLabel').textContent = t.versesLabel;
+            document.getElementById('lessonsCompleteLabel').textContent = t.lessonsCompleteLabel;
+            document.getElementById('streakLabel').textContent = t.streakLabel;
+            
+            // Navigation
+            document.getElementById('navHome').textContent = t.navHome;
+            document.getElementById('navCrisis').textContent = t.navCrisis;
+            document.getElementById('navResources').textContent = t.navResources;
+            document.getElementById('navInfo').textContent = t.navInfo;
+            document.getElementById('navAbout').textContent = t.navAbout;
+            
+            // Headers
+            document.getElementById('bibleHeaderTitle').textContent = t.bibleHeaderTitle;
+            document.getElementById('bibleHeaderSubtitle').textContent = t.bibleHeaderSubtitle;
+            document.getElementById('lessonsHeaderTitle').textContent = t.lessonsHeaderTitle;
+            document.getElementById('lessonsHeaderSubtitle').textContent = t.lessonsHeaderSubtitle;
+            document.getElementById('prayerHeaderTitle').textContent = t.prayerHeaderTitle;
+            document.getElementById('prayerHeaderSubtitle').textContent = t.prayerHeaderSubtitle;
+            document.getElementById('notesHeaderTitle').textContent = t.notesHeaderTitle;
+            document.getElementById('notesHeaderSubtitle').textContent = t.notesHeaderSubtitle;
+            document.getElementById('crisisHeaderTitle').textContent = t.crisisHeaderTitle;
+            document.getElementById('crisisHeaderSubtitle').textContent = t.crisisHeaderSubtitle;
+            document.getElementById('resourcesHeaderTitle').textContent = t.resourcesHeaderTitle;
+            document.getElementById('resourcesHeaderSubtitle').textContent = t.resourcesHeaderSubtitle;
+            
+            // Other elements
+            document.getElementById('immediateHelpTitle').textContent = t.immediateHelpTitle;
+            document.getElementById('crisisText').textContent = t.crisisText;
+            document.getElementById('versesForTrialsTitle').textContent = t.versesForTrialsTitle;
+            document.getElementById('donateButtonText').textContent = t.donateButtonText;
+            document.getElementById('timerTitle').textContent = t.timerTitle;
+            document.getElementById('prayerTopicsTitle').textContent = t.prayerTopicsTitle;
+            document.getElementById('lordsPrayerTitle').textContent = t.lordsPrayerTitle;
+            document.getElementById('todayNotesTitle').textContent = t.todayNotesTitle;
+            document.getElementById('prayerRequestsTitle').textContent = t.prayerRequestsTitle;
+            document.getElementById('testimoniesTitle').textContent = t.testimoniesTitle;
+            document.getElementById('readingPlansTitle').textContent = t.readingPlansTitle;
+            document.getElementById('memoryVersesTitle').textContent = t.memoryVersesTitle;
+            document.getElementById('bookmarksTitle').textContent = t.bookmarksTitle;
+            
+            // Update language button selection
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            const langButtons = document.querySelectorAll('.lang-btn');
+            const langMap = ['en', 'es', 'fr', 'pt', 'sw', 'zh'];
+            const index = langMap.indexOf(currentLanguage);
+            if (index >= 0 && langButtons[index]) {
+                langButtons[index].classList.add('selected');
+            }
+        }
+
+        function loadDailyVerse() {
+            const verse = dailyVerses[currentLanguage];
+            document.getElementById('dailyVerseText').textContent = verse.text;
+            document.getElementById('dailyVerseRef').textContent = verse.ref;
+        }
+
+        // Bible functions
+        function loadBibleChapter() {
+            const book = document.getElementById('bookSelect').value;
+            const chapter = document.getElementById('chapterSelect').value;
+            
+            const verses = bibleData[book][chapter];
+            const container = document.getElementById('versesContainer');
+            const title = document.getElementById('chapterTitle');
+            
+            // Update title
+            const bookName = book.charAt(0).toUpperCase() + book.slice(1);
+            title.textContent = `${bookName} ${chapter}`;
+            
+            // Display verses
+            let html = '';
+            verses.forEach((verse, index) => {
+                html += `<div class="verse">
+                    <span class="verse-num">${index + 1}</span>
+                    ${verse}
+                </div>`;
+            });
+            container.innerHTML = html;
+            
+            // Update stats
+            updateVersesRead(verses.length);
+        }
+
+        function previousChapter() {
+            const chapterSelect = document.getElementById('chapterSelect');
+            let current = parseInt(chapterSelect.value);
+            if (current > 1) {
+                chapterSelect.value = current - 1;
+                loadBibleChapter();
+            }
+        }
+
+        function nextChapter() {
+            const chapterSelect = document.getElementById('chapterSelect');
+            let current = parseInt(chapterSelect.value);
+            if (current < 3) {
+                chapterSelect.value = current + 1;
+                loadBibleChapter();
+            }
+        }
+
+        function bookmarkChapter() {
+            const book = document.getElementById('bookSelect').value;
+            const chapter = document.getElementById('chapterSelect').value;
+            const bookName = book.charAt(0).toUpperCase() + book.slice(1);
+            const bookmark = `${bookName} ${chapter}`;
+            
+            let bookmarks = JSON.parse(localStorage.getItem('sl_bookmarks') || '[]');
+            if (!bookmarks.includes(bookmark)) {
+                bookmarks.push(bookmark);
+                localStorage.setItem('sl_bookmarks', JSON.stringify(bookmarks));
+                showToast('Chapter bookmarked!');
+                loadBookmarks();
+            } else {
+                showToast('Already bookmarked');
+            }
+        }
+
+        function searchBible() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (searchTerm.length < 2) {
+                resultsDiv.innerHTML = '';
+                return;
+            }
+            
+            let results = [];
+            
+            // Search through all books and chapters
+            for (let book in bibleData) {
+                for (let chapter in bibleData[book]) {
+                    bibleData[book][chapter].forEach((verse, index) => {
+                        if (verse.toLowerCase().includes(searchTerm)) {
+                            const bookName = book.charAt(0).toUpperCase() + book.slice(1);
+                            results.push({
+                                ref: `${bookName} ${chapter}:${index + 1}`,
+                                text: verse.substring(0, 100) + '...',
+                                book: book,
+                                chapter: chapter
+                            });
+                        }
+                    });
+                }
+            }
+            
+            // Display results
+            if (results.length > 0) {
+                let html = '';
+                results.slice(0, 5).forEach(result => {
+                    html += `<div class="search-item" onclick="goToVerse('${result.book}', '${result.chapter}')">
+                        <strong>${result.ref}</strong><br>
+                        ${result.text}
+                    </div>`;
+                });
+                resultsDiv.innerHTML = html;
+            } else {
+                resultsDiv.innerHTML = '<p style="padding: 12px; color: var(--secondary);">No results found</p>';
+            }
+        }
+
+        function goToVerse(book, chapter) {
+            document.getElementById('bookSelect').value = book;
+            document.getElementById('chapterSelect').value = chapter;
+            loadBibleChapter();
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResults').innerHTML = '';
+        }
+
+        // Lessons functions
+        function loadLessons() {
+            const container = document.getElementById('lessonsContainer');
+            const completed = JSON.parse(localStorage.getItem('sl_completedLessons') || '[]');
+            
+            let html = '';
+            lessonsData.forEach(lesson => {
+                const isComplete = completed.includes(lesson.id);
+                const progress = isComplete ? 100 : 0;
+                
+                html += `
+                    <div class="lesson-item" onclick="openLesson(${lesson.id})">
+                        <h3>Lesson ${lesson.id}: ${lesson.title}</h3>
+                        <p>${lesson.subtitle}</p>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${progress}%"></div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function openLesson(id) {
+            currentLesson = id;
+            const lesson = lessonsData.find(l => l.id === id);
+            
+            document.getElementById('lessonModalTitle').textContent = `Lesson ${lesson.id}: ${lesson.title}`;
+            document.getElementById('lessonModalContent').innerHTML = lesson.content;
+            openModal('lessonModal');
+        }
+
+        function markLessonComplete() {
+            let completed = JSON.parse(localStorage.getItem('sl_completedLessons') || '[]');
+            
+            if (!completed.includes(currentLesson)) {
+                completed.push(currentLesson);
+                localStorage.setItem('sl_completedLessons', JSON.stringify(completed));
+                loadLessons();
+                updateStats();
+                showToast('Lesson completed! Great work!');
+            }
+            
+            closeModal('lessonModal');
+        }
+
+        // Prayer functions
+        function startTimer() {
+            if (!timerInterval) {
+                timerInterval = setInterval(() => {
+                    timerSeconds++;
+                    updateTimerDisplay();
+                }, 1000);
+            }
+        }
+
+        function pauseTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function resetTimer() {
+            pauseTimer();
+            timerSeconds = 0;
+            updateTimerDisplay();
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const display = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            document.getElementById('timerDisplay').textContent = display;
+        }
+
+        function loadPrayerContent() {
+            const topicsList = document.getElementById('prayerTopicsList');
+            const topics = [
+                "✓ Thank God for His blessings",
+                "✓ Pray for your family",
+                "✓ Pray for your church",
+                "✓ Pray for missionaries",
+                "✓ Pray for those who don't know Jesus",
+                "✓ Pray for wisdom and guidance",
+                "✓ Pray for healing",
+                "✓ Listen to God"
+            ];
+            
+            topicsList.innerHTML = topics.map(topic => `<p style="margin: 8px 0;">${topic}</p>`).join('');
+            
+            const lordsPrayer = document.getElementById('lordsPrayerText');
+            lordsPrayer.innerHTML = `
+                Our Father in heaven,<br>
+                Hallowed be Your name.<br>
+                Your kingdom come,<br>
+                Your will be done,<br>
+                On earth as it is in heaven.<br>
+                Give us today our daily bread.<br>
+                And forgive us our debts,<br>
+                As we forgive our debtors.<br>
+                And lead us not into temptation,<br>
+                But deliver us from evil.<br>
+                For Yours is the kingdom,<br>
+                The power, and the glory,<br>
+                Forever. Amen.
+            `;
+        }
+
+        // Notes functions
+        function saveNote(type) {
+            let value = '';
+            let key = '';
+            
+            switch(type) {
+                case 'today':
+                    value = document.getElementById('todayNotes').value;
+                    key = 'sl_notes_today';
+                    break;
+                case 'requests':
+                    value = document.getElementById('prayerRequestsNotes').value;
+                    key = 'sl_notes_requests';
+                    break;
+                case 'testimonies':
+                    value = document.getElementById('testimoniesNotes').value;
+                    key = 'sl_notes_testimonies';
+                    break;
+            }
+            
+            localStorage.setItem(key, value);
+        }
+
+        function loadNotes() {
+            const todayNotes = localStorage.getItem('sl_notes_today');
+            const requests = localStorage.getItem('sl_notes_requests');
+            const testimonies = localStorage.getItem('sl_notes_testimonies');
+            
+            if (todayNotes) document.getElementById('todayNotes').value = todayNotes;
+            if (requests) document.getElementById('prayerRequestsNotes').value = requests;
+            if (testimonies) document.getElementById('testimoniesNotes').value = testimonies;
+        }
+
+        // Crisis content
+        function loadCrisisContent() {
+            const versesList = document.getElementById('crisisVersesList');
+            const verses = [
+                { situation: "When Anxious", verse: "Cast all your anxiety on him because he cares for you.", ref: "1 Peter 5:7" },
+                { situation: "When Afraid", verse: "When I am afraid, I put my trust in you.", ref: "Psalm 56:3" },
+                { situation: "When Depressed", verse: "The Lord is close to the brokenhearted.", ref: "Psalm 34:18" },
+                { situation: "When Lonely", verse: "Never will I leave you; never will I forsake you.", ref: "Hebrews 13:5" },
+                { situation: "When Tempted", verse: "No temptation has overtaken you except what is common.", ref: "1 Cor 10:13" }
+            ];
+            
+            let html = '';
+            verses.forEach(v => {
+                html += `
+                    <div style="margin-bottom: 20px;">
+                        <strong>${v.situation}:</strong><br>
+                        <em>"${v.verse}"</em><br>
+                        <span style="color: var(--accent);">- ${v.ref}</span>
+                    </div>
+                `;
+            });
+            
+            versesList.innerHTML = html;
+        }
+
+        // Resources content
+        function loadResourcesContent() {
+            loadMemoryVerses();
+            loadBookmarks();
+        }
+
+        function loadMemoryVerses() {
+            const versesList = document.getElementById('memoryVersesList');
+            const verses = [
+                "📌 John 3:16 - God's Love",
+                "📌 Romans 8:28 - All Things Work Together",
+                "📌 Philippians 4:13 - Strength in Christ",
+                "📌 Psalm 23 - The Lord is My Shepherd",
+                "📌 Jeremiah 29:11 - Plans to Prosper"
+            ];
+            
+            versesList.innerHTML = verses.map(v => `<p style="margin: 8px 0;">${v}</p>`).join('');
+        }
+
+        function loadBookmarks() {
+            const bookmarks = JSON.parse(localStorage.getItem('sl_bookmarks') || '[]');
+            const bookmarksList = document.getElementById('bookmarksList');
+            
+            if (bookmarks.length > 0) {
+                bookmarksList.innerHTML = bookmarks.map(b => `<p style="margin: 8px 0;">📖 ${b}</p>`).join('');
+            } else {
+                bookmarksList.innerHTML = '<p style="color: var(--secondary);">No bookmarks yet</p>';
+            }
+        }
+
+        function setReadingPlan(plan) {
+            localStorage.setItem('sl_readingPlan', plan);
+            showToast(`${plan} reading plan selected!`);
+        }
+
+        // Stats functions
+        function loadStats() {
+            updateDaysStudied();
+            updateVersesRead(0);
+            updateLessonsComplete();
+            updateStreak();
+        }
+
+        function updateStats() {
+            loadStats();
+        }
+
+        function updateDaysStudied() {
+            const lastVisit = localStorage.getItem('sl_lastVisit');
+            const today = new Date().toDateString();
+            let days = parseInt(localStorage.getItem('sl_daysStudied') || '0');
+            
+            if (lastVisit !== today) {
+                days++;
+                localStorage.setItem('sl_daysStudied', days);
+                localStorage.setItem('sl_lastVisit', today);
+            }
+            
+            document.getElementById('daysCount').textContent = days;
+        }
+
+        function updateVersesRead(newVerses) {
+            let total = parseInt(localStorage.getItem('sl_versesRead') || '0');
+            if (newVerses > 0) {
+                total += newVerses;
+                localStorage.setItem('sl_versesRead', total);
+            }
+            document.getElementById('versesCount').textContent = total;
+        }
+
+        function updateLessonsComplete() {
+            const completed = JSON.parse(localStorage.getItem('sl_completedLessons') || '[]');
+            document.getElementById('lessonsCount').textContent = completed.length;
+        }
+
+        function updateStreak() {
+            // Simple streak calculation
+            const lastVisit = localStorage.getItem('sl_lastVisit');
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            
+            let streak = parseInt(localStorage.getItem('sl_streak') || '0');
+            
+            if (lastVisit === today.toDateString()) {
+                // Already visited today
+            } else if (lastVisit === yesterday.toDateString()) {
+                // Visited yesterday, continue streak
+                streak++;
+                localStorage.setItem('sl_streak', streak);
+            } else {
+                // Missed a day, reset streak
+                streak = 1;
+                localStorage.setItem('sl_streak', streak);
+            }
+            
+            document.getElementById('streakCount').textContent = streak;
+        }
+
+        // Audio functions
+        function toggleAudio() {
+            audioPlaying = !audioPlaying;
+            const icon = document.getElementById('audioIcon');
+            
+            if (audioPlaying) {
+                icon.textContent = '🔇';
+                startBackgroundMusic();
+            } else {
+                icon.textContent = '🎵';
+                stopBackgroundMusic();
+            }
+        }
+
+        function startBackgroundMusic() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            
+            const notes = [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88];
+            let noteIndex = 0;
+            
+            function playNote() {
+                if (!audioPlaying) return;
+                
+                oscillator = audioContext.createOscillator();
+                gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.value = notes[noteIndex];
+                oscillator.type = 'sine';
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.05, audioContext.currentTime + 0.1);
+                gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.8);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.8);
+                
+                noteIndex = (noteIndex + 1) % notes.length;
+                
+                setTimeout(playNote, 1000);
+            }
+            
+            playNote();
+        }
+
+        function stopBackgroundMusic() {
+            if (oscillator) {
+                try {
+                    oscillator.stop();
+                } catch(e) {}
+            }
+        }
+
+        // Navigation
+        function showScreen(screenId) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show selected screen
+            document.getElementById(screenId).classList.add('active');
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Set active nav item
+            const navMap = {
+                'homeScreen': 0,
+                'crisisScreen': 1,
+                'resourcesScreen': 2
+            };
+            
+            if (navMap[screenId] !== undefined) {
+                document.querySelectorAll('.nav-item')[navMap[screenId]].classList.add('active');
+            }
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const existing = document.querySelector('.toast');
+            if (existing) existing.remove();
+            
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        // Initialize app on load
+        window.addEventListener('load', init);
+    </script>
+</body>
+</html>
